@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_03_17_200445) do
+ActiveRecord::Schema[7.0].define(version: 2023_03_17_202428) do
   create_table "options", force: :cascade do |t|
     t.integer "query_id", null: false
     t.string "answer"
@@ -23,6 +23,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_17_200445) do
     t.string "question"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["user_id"], name: "index_queries_on_user_id"
   end
 
   create_table "query_options", force: :cascade do |t|
@@ -48,6 +50,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_17_200445) do
   end
 
   add_foreign_key "options", "queries"
+  add_foreign_key "queries", "users"
   add_foreign_key "query_options", "options"
   add_foreign_key "query_options", "queries"
 end
