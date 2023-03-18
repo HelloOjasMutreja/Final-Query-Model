@@ -10,17 +10,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_03_17_202428) do
+ActiveRecord::Schema[7.0].define(version: 2023_03_18_165454) do
   create_table "options", force: :cascade do |t|
     t.integer "query_id", null: false
-    t.string "answer"
+    t.string "content"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["query_id"], name: "index_options_on_query_id"
   end
 
   create_table "queries", force: :cascade do |t|
-    t.string "question"
+    t.string "title"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false

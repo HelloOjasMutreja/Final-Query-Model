@@ -1,4 +1,5 @@
 class Query < ApplicationRecord
+    
     belongs_to :user
     has_many :query_options, dependent: :destroy
     has_many :options, through: :query_options

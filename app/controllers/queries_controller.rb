@@ -38,7 +38,7 @@ class QueriesController < ApplicationController
   def update
     @query = Query.find(params[:id])
 
-    @query_option = @query.query_options.build(option_attributes: { query_id: @query.id, answer: params[:query][:query_option][:option][:answer] })
+    @query_option = @query.query_options.build(option_attributes: { query_id: @query.id, content: params[:query][:query_option][:option][:content] })
 
     if @query_option.save
       redirect_to query_url(@query), notice: 'Option was successfully Added.'
@@ -63,7 +63,7 @@ class QueriesController < ApplicationController
   end
 
   def query_params
-    params.require(:query).permit(:question, :id, query_options_attributes:
-      [:id, { options_attributes: %i[id answer _destroy] }])
+    params.require(:query).permit(:title, :id, query_options_attributes:
+      [:id, { options_attributes: %i[id content _destroy] }])
   end   
 end

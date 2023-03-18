@@ -45,6 +45,6 @@ class OptionsController < ApplicationController
     end
 
     def option_params
-      params.require(:options).permit(:query_id, :answer)
+      params.require(:options).permit(:query_id, :content)
     end
 end
