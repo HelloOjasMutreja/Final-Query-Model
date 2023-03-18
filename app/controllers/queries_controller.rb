@@ -1,26 +1,26 @@
 class QueriesController < ApplicationController
   before_action :set_query, only: %i[ show edit update destroy ]
+  before_action :authenticate_user!, only: %i[new edit]
 
   # GET /queries or /queries.json
   def index
-    @queries = Query.all
+    @queries = Query.all.order('created_at DESC')
   end
 
-  # GET /queries/1 or /queries/1.json
   def show
+    @query = Query.find(params[:id])
+    @query_option = @query.query_options.build
+    @option = @query_option.build_option
   end
 
-  # GET /queries/new
   def new
     @query = current_user.queries.build
-    @option = @query.options.build
+    @options = @query.options.build
   end
 
-  # GET /queries/1/edit
   def edit
   end
 
-  # POST /queries or /queries.json
   def create
     @query = current_user.queries.build(query_params)
 
@@ -35,20 +35,18 @@ class QueriesController < ApplicationController
     end
   end
 
-  # PATCH/PUT /queries/1 or /queries/1.json
   def update
-    respond_to do |format|
-      if @query.update(query_params)
-        format.html { redirect_to query_url(@query), notice: "Query was successfully updated." }
-        format.json { render :show, status: :ok, location: @query }
-      else
-        format.html { render :edit, status: :unprocessable_entity }
-        format.json { render json: @query.errors, status: :unprocessable_entity }
-      end
+    @query = Query.find(params[:id])
+
+    @query_option = @query.query_options.build(option_attributes: { query_id: @query.id, answer: params[:query][:query_option][:option][:answer] })
+
+    if @query_option.save
+      redirect_to query_url(@query), notice: 'Option was successfully Added.'
+    else
+      render :edit, status: :unprocessable_entity
     end
   end
 
-  # DELETE /queries/1 or /queries/1.json
   def destroy
     @query.destroy
 
@@ -59,13 +57,13 @@ class QueriesController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_query
-      @query = Query.find(params[:id])
-    end
 
-    # Only allow a list of trusted parameters through.
-    def query_params
-      params.require(:query).permit(:question)
-    end
+  def set_query
+    @query = Query.find(params[:id])
+  end
+
+  def query_params
+    params.require(:query).permit(:question, :id, query_options_attributes:
+      [:id, { options_attributes: %i[id answer _destroy] }])
+  end   
 end

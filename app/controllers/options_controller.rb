@@ -1,70 +1,50 @@
 class OptionsController < ApplicationController
-  before_action :set_option, only: %i[ show edit update destroy ]
+  before_action :set_option, only: %i[ edit update destroy ]
 
-  # GET /options or /options.json
-  def index
-    @options = Option.all
-  end
-
-  # GET /options/1 or /options/1.json
-  def show
-  end
-
-  # GET /options/new
   def new
-    @option = Option.new
+    @query = Query.find(params[:query_id])
+    @option = @query.options.build
   end
 
-  # GET /options/1/edit
+  def create
+    @query = Query.find(params[:query_id])
+    @option = @query.options.new(option_params)
+    if @option.save
+      redirect_to query_path(@query)
+    else
+      render 'new'
+    end
+  end
+
   def edit
   end
 
-  # POST /options or /options.json
-  def create
-    @option = Option.new(option_params)
-
-    respond_to do |format|
-      if @option.save
-        format.html { redirect_to option_url(@option), notice: "Option was successfully created." }
-        format.json { render :show, status: :created, location: @option }
-      else
-        format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @option.errors, status: :unprocessable_entity }
-      end
-    end
-  end
-
-  # PATCH/PUT /options/1 or /options/1.json
   def update
-    respond_to do |format|
-      if @option.update(option_params)
-        format.html { redirect_to option_url(@option), notice: "Option was successfully updated." }
-        format.json { render :show, status: :ok, location: @option }
-      else
-        format.html { render :edit, status: :unprocessable_entity }
-        format.json { render json: @option.errors, status: :unprocessable_entity }
-      end
+    if @option.update(option_params)
+      redirect_to query_path(@option.query)
+    else
+      render 'edit'
     end
   end
 
-  # DELETE /options/1 or /options/1.json
   def destroy
+    @query = params[:query_id]
     @option.destroy
+    redirect_to query_path(@query)
+  end
 
-    respond_to do |format|
-      format.html { redirect_to options_url, notice: "Option was successfully destroyed." }
-      format.json { head :no_content }
-    end
+  def random
+    @query = Query.find(params[:query_id])
+    @option = @query.options.sample
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
+  
     def set_option
-      @option = Option.find(params[:id])
+      @option = Option.find_by(query_id: params[:query_id], id: params[:id])
     end
 
-    # Only allow a list of trusted parameters through.
     def option_params
-      params.require(:option).permit(:query_id, :answer)
+      params.require(:options).permit(:query_id, :answer)
     end
 end
