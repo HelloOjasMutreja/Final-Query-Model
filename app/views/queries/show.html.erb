@@ -43,6 +43,8 @@
   <%= link_to "Random Option", random_query_options_path(@query), class: "btn btn-primary" %>
 </div>
 
+<%= button_to "Add to daily list", add_to_daily_list_query_path(@query), method: :post %>
+
 <div>
   <%= link_to "Edit this query", edit_query_path(@query) %> |
   <%= link_to "Back to queries", queries_path %>

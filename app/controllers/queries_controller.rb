@@ -56,6 +56,19 @@ class QueriesController < ApplicationController
     end
   end
 
+  def add_to_daily_list
+    query = Query.find(params[:id])
+    daily_query = current_user.daily_queries.new(query: query.duplicate)
+
+    if daily_query.save
+      flash[:notice] = "Query added to daily list"
+    else
+      flash[:alert] = "Error adding query to daily list"
+    end
+
+    redirect_to query
+  end
+
   private
 
   def set_query

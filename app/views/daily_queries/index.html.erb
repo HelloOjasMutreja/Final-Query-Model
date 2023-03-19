@@ -1,0 +1,10 @@
+<h1>Daily Queries</h1>
+
+<ul>
+    <% @daily_queries.each do |daily_query| %>
+        <li>
+        <%= daily_query.query.title %>
+        <%= button_to "Remove", daily_query_path(daily_query), method: :delete, data: { confirm: "Are you sure?" } %>
+        </li>
+    <% end %>
+</ul>

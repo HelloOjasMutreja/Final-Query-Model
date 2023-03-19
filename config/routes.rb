@@ -5,6 +5,9 @@ Rails.application.routes.draw do
 
   devise_for :users
 
+  resources :daily_queries, only: [:index, :create, :destroy]
+  post 'queries/:id/add_to_daily_list', to: 'queries#add_to_daily_list', as: :add_to_daily_list_query
+
   resources :queries do
     resources :options do
       get :random, on: :collection
