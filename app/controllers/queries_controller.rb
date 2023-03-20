@@ -56,17 +56,16 @@ class QueriesController < ApplicationController
     end
   end
 
-  def add_to_daily_list
-    query = Query.find(params[:id])
-    daily_query = current_user.daily_queries.new(query: query.duplicate)
+  def transfer
+    @query = Query.find(params[:id])
+    daily_query = DailyQuery.create(title: @query.title, user: @query.user)
 
-    if daily_query.save
-      flash[:notice] = "Query added to daily list"
-    else
-      flash[:alert] = "Error adding query to daily list"
+    @query.options.each do |option|
+      daily_query.options << option
     end
 
-    redirect_to query
+    @query.destroy
+    redirect_to daily_queries_path
   end
 
   private

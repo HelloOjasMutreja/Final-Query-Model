@@ -1,32 +1,78 @@
 class DailyQueriesController < ApplicationController
-  before_action :authenticate_user!
+  before_action :set_daily_query, only: %i[ show edit update destroy ]
+  before_action :authenticate_user!, only: %i[new edit]
 
+  # GET /daily_queries or /daily_queries.json
   def index
-    @daily_queries = current_user.daily_queries.includes(:query)
+    @daily_queries = DailyQuery.all.order('created_at DESC')
   end
 
+  # GET /daily_queries/1 or /daily_queries/1.json
+  def show
+    @daily_query = DailyQuery.find(params[:id])
+    @daily_query_option = @daily_query.daily_query_options.build
+    @option = @daily_query_option.build_option
+  end
+
+  # GET /daily_queries/new
+  def new
+    @daily_query = current_user.daily_queries.build
+    @options = @daily_query.options.build
+  end
+
+  # GET /daily_queries/1/edit
+  def edit
+  end
+
+  # POST /daily_queries or /daily_queries.json
   def create
-    query = Query.find(params[:query_id])
-    daily_query = current_user.daily_queries.new(query: query)
+    @daily_query = current_user.daily_queries.build(daily_query_params)
 
-    if daily_query.save
-      flash[:notice] = "Query added to daily list"
-    else
-      flash[:alert] = "Error adding query to daily list"
+    respond_to do |format|
+      if @daily_query.save
+        format.html { redirect_to daily_query_url(@daily_query), notice: "Daily query was successfully created." }
+        format.json { render :show, status: :created, location: @daily_query }
+      else
+        format.html { render :new, status: :unprocessable_entity }
+        format.json { render json: @daily_query.errors, status: :unprocessable_entity }
+      end
     end
-
-    redirect_to queries_path
   end
 
+  # PATCH/PUT /daily_queries/1 or /daily_queries/1.json
+  def update
+    @daily_query = DailyQuery.find(params[:id])
+    
+    respond_to do |format|
+      if @daily_query.update(daily_query_params)
+        format.html { redirect_to daily_query_url(@daily_query), notice: "Daily query was successfully updated." }
+        format.json { render :show, status: :ok, location: @daily_query }
+      else
+        format.html { render :edit, status: :unprocessable_entity }
+        format.json { render json: @daily_query.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+
+  # DELETE /daily_queries/1 or /daily_queries/1.json
   def destroy
-    daily_query = current_user.daily_queries.find(params[:id])
+    @daily_query.destroy
 
-    if daily_query.destroy
-      flash[:notice] = "Query removed from daily list"
-    else
-      flash[:alert] = "Error removing query from daily list"
+    respond_to do |format|
+      format.html { redirect_to daily_queries_url, notice: "Daily query was successfully destroyed." }
+      format.json { head :no_content }
+    end
+  end
+
+  private
+    # Use callbacks to share common setup or constraints between actions.
+    def set_daily_query
+      @daily_query = DailyQuery.find(params[:id])
     end
 
-    redirect_to daily_queries_path
-  end
+    # Only allow a list of trusted parameters through.
+    def daily_query_params
+      params.require(:daily_query).permit(:title, :id, query_options_attributes:
+        [:id, { options_attributes: %i[id content _destroy] }])
+    end
 end

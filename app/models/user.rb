@@ -5,7 +5,7 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable
 
   has_many :queries, dependent: :destroy
-  has_many :daily_queries
+  has_many :daily_queries, dependent: :destroy
   enum role: [:user, :advisor]
   after_initialize :set_default_role, if: :new_record?
 

@@ -10,13 +10,22 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_03_19_212826) do
+ActiveRecord::Schema[7.0].define(version: 2023_03_20_180714) do
   create_table "daily_queries", force: :cascade do |t|
-    t.integer "user_id"
+    t.string "title"
+    t.integer "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "query_id"
-    t.index ["query_id"], name: "index_daily_queries_on_query_id"
+    t.index ["user_id"], name: "index_daily_queries_on_user_id"
+  end
+
+  create_table "daily_query_options", force: :cascade do |t|
+    t.integer "daily_query_id", null: false
+    t.integer "option_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["daily_query_id"], name: "index_daily_query_options_on_daily_query_id"
+    t.index ["option_id"], name: "index_daily_query_options_on_option_id"
   end
 
   create_table "options", force: :cascade do |t|
@@ -57,7 +66,9 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_19_212826) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
-  add_foreign_key "daily_queries", "queries"
+  add_foreign_key "daily_queries", "users"
+  add_foreign_key "daily_query_options", "daily_queries"
+  add_foreign_key "daily_query_options", "options"
   add_foreign_key "options", "queries"
   add_foreign_key "queries", "users"
   add_foreign_key "query_options", "options"

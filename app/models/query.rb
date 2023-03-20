@@ -4,13 +4,7 @@ class Query < ApplicationRecord
     has_many :query_options, dependent: :destroy
     has_many :options, through: :query_options
     accepts_nested_attributes_for :query_options, reject_if: :all_blank, allow_destroy: true
-    before_destroy :destroy_options
-
-    def duplicate
-        new_query = dup
-        new_query.options = options.map(&:dup)
-        new_query
-    end    
+    before_destroy :destroy_options   
 
     private
   

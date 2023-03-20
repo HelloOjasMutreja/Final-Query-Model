@@ -1,0 +1,10 @@
+<p style="color: green"><%= notice %></p>
+
+<%= render @daily_query %>
+
+<div>
+  <%= link_to "Edit this daily query", edit_daily_query_path(@daily_query) %> |
+  <%= link_to "Back to daily queries", daily_queries_path %>
+
+  <%= button_to "Destroy this daily query", @daily_query, method: :delete %>
+</div>
