@@ -41,16 +41,14 @@ class DailyQueriesController < ApplicationController
 
   # PATCH/PUT /daily_queries/1 or /daily_queries/1.json
   def update
-    @daily_query = DailyQuery.find(params[:id])
-    
-    respond_to do |format|
-      if @daily_query.update(daily_query_params)
-        format.html { redirect_to daily_query_url(@daily_query), notice: "Daily query was successfully updated." }
-        format.json { render :show, status: :ok, location: @daily_query }
-      else
-        format.html { render :edit, status: :unprocessable_entity }
-        format.json { render json: @daily_query.errors, status: :unprocessable_entity }
-      end
+    @daily_query = Query.find(params[:id])
+
+    @daily_query_option = @daily_query.query_options.build(option_attributes: { query_id: @daily_query.id, content: params[:daily_query][:query_option][:option][:content] })
+
+    if @daily_query_option.save
+      redirect_to daily_query_url(@daily_query), notice: 'Option was successfully Added.'
+    else
+      render :edit, status: :unprocessable_entity
     end
   end
 

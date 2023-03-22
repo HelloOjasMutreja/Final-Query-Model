@@ -8,7 +8,7 @@ class OptionsController < ApplicationController
 
   def create
     @query = Query.find(params[:query_id])
-    @option = @query.options.new(option_params)
+    @option = @query.options.new(params[:option])
     if @option.save
       redirect_to query_path(@query)
     else
@@ -45,6 +45,6 @@ class OptionsController < ApplicationController
     end
 
     def option_params
-      params.require(:options).permit(:query_id, :content)
+      params.require(:option).permit(:query_id, :content)
     end
 end

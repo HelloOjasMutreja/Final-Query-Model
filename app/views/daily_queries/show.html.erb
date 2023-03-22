@@ -1,6 +1,43 @@
-<p style="color: green"><%= notice %></p>
-
 <%= render @daily_query %>
+
+<div>
+  <% if user_signed_in? %>
+    <% if @daily_query.user_id == current_user.id %>
+      <%= form_with model: @daily_query do |f| %>
+          <%= f.fields_for :daily_query_option do |daily_query_option_form| %>
+            <%# Allow creation of new options %>
+            <%= daily_query_option_form.fields_for :option do |option_form| %>
+                <%= option_form.label :content %>:
+                <%= option_form.text_field :content %>
+                <%# option_form.check_box :preferred %>
+            <% end %>
+          <% end %>
+          <%= f.submit "Add Option" %>
+      <% end %>
+    <% end %>
+  <% end %>
+</div>
+
+<br />
+
+<div>
+  <% @daily_query.options.each do |option| %>
+    <p>
+      <%= option.content %>
+      <% if user_signed_in? %>
+        <% if @daily_query.user_id == current_user.id %>
+          <%# if option.preferred %>
+            <%# link_to "Cancel preference", cancel_preference_dailyquery_option_path(@daily_query, option), method: :post %>
+          <%# else %>
+            <%# button_to "Delete", dailyquery_option_path(@daily_query, option), method: :delete %>
+            <%# button_to "Mark as preferred", mark_as_preferred_dailyquery_option_path(@daily_query, option), method: :post %>
+          <%# end %>
+          <%= button_to "Delete", dailyquery_option_path(@daily_query, option), method: :delete %>
+        <% end %>
+      <% end %>
+    </p>
+  <% end %>
+</div>
 
 <div>
   <%= link_to "Edit this daily query", edit_daily_query_path(@daily_query) %> |

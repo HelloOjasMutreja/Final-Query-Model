@@ -36,14 +36,25 @@ class QueriesController < ApplicationController
   end
 
   def update
-    @query = Query.find(params[:id])
-
-    @query_option = @query.query_options.build(option_attributes: { query_id: @query.id, content: params[:query][:query_option][:option][:content] })
-
-    if @query_option.save
-      redirect_to query_url(@query), notice: 'Option was successfully Added.'
-    else
-      render :edit, status: :unprocessable_entity
+    respond_to do |format|
+      if @query.update(query_params)
+        if params[:query] && params[:query][:query_option] && params[:query][:query_option][:option] && params[:query][:query_option][:option][:content]
+          @query_option = @query.query_options.build(option_attributes: { query_id: @query.id, content: params[:query][:query_option][:option][:content] })
+          if @query_option.save
+            format.html { redirect_to query_url(@query), notice: 'Option was successfully Added.' }
+            format.json { render :show, status: :ok, location: @query }
+          else
+            format.html { render :edit }
+            format.json { render json: @query.errors, status: :unprocessable_entity }
+          end
+        else
+          format.html { redirect_to query_url(@query), alert: 'Option was not added.' }
+          format.json { render :show, status: :ok, location: @query }
+        end
+      else
+        format.html { render :edit }
+        format.json { render json: @query.errors, status: :unprocessable_entity }
+      end
     end
   end
 

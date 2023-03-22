@@ -14,6 +14,8 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :options, only: [:create, :update, :destroy]
+
   resources :daily_queries do
     resources :options do
       get :random, on: :collection
